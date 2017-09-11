@@ -17,13 +17,12 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
   request(options, (err, response, body) => {
     const contributors = JSON.parse(body);
-    for (const contributor of contributors) {
-      console.log(contributor.avatar_url);
-    }
+    cb(err, contributors);
   });
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
-  console.log("Errors:", err);
-  console.log("Result:", result);
+getRepoContributors("jquery", "jquery", (err, contributors) => {
+  for (const contributor of contributors) {
+    console.log(contributor.avatar_url);
+  }
 });
