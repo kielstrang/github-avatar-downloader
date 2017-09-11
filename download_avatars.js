@@ -24,7 +24,10 @@ function downloadContributorAvatar(contributor) {
 
 function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
-    url: `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}@api.github.com/repos/${repoOwner}/${repoName}/contributors`,
+    url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
+    qs: {
+      access_token: process.env.GITHUB_TOKEN
+    },
     headers: {
       'User-Agent': USER_AGENT
     }
