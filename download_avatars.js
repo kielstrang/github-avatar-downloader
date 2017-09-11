@@ -1,8 +1,7 @@
+require('dotenv').config();
 const request = require('request');
 const fs = require('fs');
 
-const GITHUB_USER = "kielstrang";
-const GITHUB_TOKEN = "bc5c433206b4bfac90f93add3e77277cda758b15";
 const USER_AGENT = 'GitHub Avatar Downloader - Student Project';
 
 function downloadImageByURL(url, filepath) {
@@ -25,7 +24,7 @@ function downloadContributorAvatar(contributor) {
 
 function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
-    url: `https://${GITHUB_USER}:${GITHUB_TOKEN}@api.github.com/repos/${repoOwner}/${repoName}/contributors`,
+    url: `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}@api.github.com/repos/${repoOwner}/${repoName}/contributors`,
     headers: {
       'User-Agent': USER_AGENT
     }
