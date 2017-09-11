@@ -1,8 +1,6 @@
 const request = require('request');
 const fs = require('fs');
 
-console.log('Welcome to the GitHub Avatar Downloader!');
-
 const GITHUB_USER = "kielstrang";
 const GITHUB_TOKEN = "bc5c433206b4bfac90f93add3e77277cda758b15";
 const USER_AGENT = 'GitHub Avatar Downloader - Student Project';
@@ -41,7 +39,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
 
 
-getRepoContributors("jquery", "jquery", (err, contributors) => {
+console.log('Welcome to the GitHub Avatar Downloader!');
+const repoOwner = process.argv[2];
+const repoName = process.argv[3];
+
+getRepoContributors(repoOwner, repoName, (err, contributors) => {
   for (const contributor of contributors) {
     downloadContributorAvatar(contributor);
   }
