@@ -20,6 +20,11 @@ function downloadImageByURL(url, filepath) {
     .pipe(fs.createWriteStream(filepath));
 }
 
+function downloadContributorAvatar(contributor) {
+  const localPath = `avatars/${contributor.login}.jpg`;
+  downloadImageByURL(contributor.avatar_url, localPath);
+}
+
 function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
     url: `https://${GITHUB_USER}:${GITHUB_TOKEN}@api.github.com/repos/${repoOwner}/${repoName}/contributors`,
@@ -34,10 +39,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
-// getRepoContributors("jquery", "jquery", (err, contributors) => {
-//   for (const contributor of contributors) {
-//     console.log(contributor.avatar_url);
-//   }
-// });
 
-downloadImageByURL('https://avatars3.githubusercontent.com/u/46987?v=4', 'avatars/test-avatar.jpg');
+
+getRepoContributors("jquery", "jquery", (err, contributors) => {
+  for (const contributor of contributors) {
+    downloadContributorAvatar(contributor);
+  }
+});
