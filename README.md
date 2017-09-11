@@ -6,6 +6,8 @@ Given a GitHub repository name and owner, download all the contributors' profile
 
 ## Expected Usage
 
+Before running this program, copy the `.env.example` file to `.env` and fill it in with your Github credentials.
+
 This program should be executed from the command line, in the following manner:
 
 `node download_avatars.js jquery jquery`
