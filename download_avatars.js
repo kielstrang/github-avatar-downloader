@@ -43,8 +43,16 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 const repoOwner = process.argv[2];
 const repoName = process.argv[3];
 
-getRepoContributors(repoOwner, repoName, (err, contributors) => {
-  for (const contributor of contributors) {
-    downloadContributorAvatar(contributor);
-  }
-});
+if(repoOwner && repoName) {
+  getRepoContributors(repoOwner, repoName, (err, contributors) => {
+    if (err) { throw err; }
+
+    for (const contributor of contributors) {
+      downloadContributorAvatar(contributor);
+    }
+    console.log('Avatars downloaded!');
+  });
+} else {
+  console.log('Please specify the repo owner and name!');
+}
+
