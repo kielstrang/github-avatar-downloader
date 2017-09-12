@@ -1,3 +1,4 @@
+require('dotenv').config();
 const request = require('request');
 const fs = require('fs');
 
@@ -32,10 +33,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
 
-  request(options, (err, response, body) => {
-    const contributors = JSON.parse(body);
-    cb(err, contributors);
-  });
+  request(options, cb);
 }
 
 function downloadRepoContributorAvatars() {
@@ -52,21 +50,25 @@ function downloadRepoContributorAvatars() {
   const repoName = args._[1];
 
   //read a GitHub access token from the .env file - fail if not found
-  require('dotenv').config();
   if(typeof process.env.GITHUB_TOKEN !== 'string') {
     console.log('Please add a GitHub access token to the .env file (GITHUB_TOKEN=<your_token>)');
     return;
   }
 
-  getRepoContributors(repoOwner, repoName, (err, response) => {
+  getRepoContributors(repoOwner, repoName, (err, response, body) => {
     //handle errors returned from GitHub
     if (err) { throw err; }
-    if (response.message === 'Not Found') {
-      console.log('No repo found with the specified name and owner');
-      return;
-    }
-    if (response.message === 'Bad credentials') {
-      console.log('Invalid GitHub access token');
+
+    if (response.statusCode > 299) {
+      var errMsg = `GitHub returned the following error: ${response.statusCode} ${response.statusMessage}`;
+
+      if (response.statusCode === 404) {
+        errMsg = `Repository not found - check your owner and repo names. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
+      }
+      if (response.statusCode === 401) {
+        errMsg = `Invalid GitHub access token. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
+      }
+      console.log(errMsg);
       return;
     }
 
@@ -76,7 +78,8 @@ function downloadRepoContributorAvatars() {
       return;
     }
 
-    for (const contributor of response) {
+    const contributors = JSON.parse(body);
+    for (const contributor of contributors) {
       downloadContributorAvatar(contributor, path);
     }
     console.log('Avatars downloaded!');
