@@ -9,7 +9,13 @@ function incrementStarCount(repoName, starredRepoList) {
 }
 
 function printTopRepos (starredRepoList, numToPrint) {
-  console.log(starredRepoList);
+  const starCounts = starredRepoList.starCounts;
+  const sorted = Object.keys(starCounts).sort((a,b) => {
+    return starCounts[a] < starCounts[b] ? 1 : -1;
+  });
+  for(let i = 0; i < numToPrint; i++) {
+    console.log(`[${starCounts[sorted[i]]} stars] ${sorted[i]}`);
+  }
 }
 
 function getRecommendedRepos() {
@@ -47,7 +53,6 @@ function getRecommendedRepos() {
       });
     }
   });
-
 }
 
 getRecommendedRepos();
