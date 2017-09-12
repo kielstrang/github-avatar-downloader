@@ -1,40 +1,5 @@
-require('dotenv').config();
-const request = require('request');
+const git = require('./git-utilities.js');
 const fs = require('fs');
-
-const USER_AGENT = 'GitHub Avatar Downloader - Student Project';
-
-function downloadImageByURL(url, filepath) {
-  const options = {
-    url: url,
-    headers: {
-      'User-Agent': USER_AGENT
-    }
-  };
-
-  request.get(options)
-    .on('error', (err) => { throw err; })
-    .pipe(fs.createWriteStream(filepath));
-}
-
-function downloadContributorAvatar(contributor, path) {
-  const fullPath = `${path}/${contributor.login}.jpg`;
-  downloadImageByURL(contributor.avatar_url, fullPath);
-}
-
-function getRepoContributors(repoOwner, repoName, cb) {
-  const options = {
-    url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
-    qs: {
-      access_token: process.env.GITHUB_TOKEN
-    },
-    headers: {
-      'User-Agent': USER_AGENT
-    }
-  };
-
-  request(options, cb);
-}
 
 function downloadRepoContributorAvatars() {
   console.log('Welcome to the GitHub Avatar Downloader');
@@ -55,7 +20,7 @@ function downloadRepoContributorAvatars() {
     return;
   }
 
-  getRepoContributors(repoOwner, repoName, (err, response, body) => {
+  git.getRepoContributors(repoOwner, repoName, (err, response, body) => {
     //handle errors returned from GitHub
     if (err) { throw err; }
 
@@ -80,7 +45,7 @@ function downloadRepoContributorAvatars() {
 
     const contributors = JSON.parse(body);
     for (const contributor of contributors) {
-      downloadContributorAvatar(contributor, path);
+      git.downloadContributorAvatar(contributor, path);
     }
     console.log('Avatars downloaded!');
   });
