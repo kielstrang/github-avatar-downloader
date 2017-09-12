@@ -33,7 +33,24 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
 
-  request(options, cb);
+  request(options, (err, response, body) => {
+    //handle errors returned from GitHub
+    if (err) { throw err; }
+
+    if (response.statusCode > 299) {
+      var errMsg = `GitHub returned the following error: ${response.statusCode} ${response.statusMessage}`;
+
+      if (response.statusCode === 404) {
+        errMsg = `Repository ${repoOwner}/${repoName} does not exist. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
+      }
+      if (response.statusCode === 401) {
+        errMsg = `Invalid GitHub access token. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
+      }
+      throw errMsg;
+    }
+
+    cb(JSON.parse(body));
+  });
 }
 
 module.exports = { downloadImageByURL, downloadContributorAvatar, getRepoContributors };

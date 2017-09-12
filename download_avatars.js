@@ -20,31 +20,14 @@ function downloadRepoContributorAvatars() {
     return;
   }
 
-  git.getRepoContributors(repoOwner, repoName, (err, response, body) => {
-    //handle errors returned from GitHub
-    if (err) { throw err; }
-
-    if (response.statusCode > 299) {
-      var errMsg = `GitHub returned the following error: ${response.statusCode} ${response.statusMessage}`;
-
-      if (response.statusCode === 404) {
-        errMsg = `Repository not found - check your owner and repo names. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
-      }
-      if (response.statusCode === 401) {
-        errMsg = `Invalid GitHub access token. (GitHub says: ${response.statusCode} ${response.statusMessage})`;
-      }
-      console.log(errMsg);
-      return;
-    }
-
+  git.getRepoContributors(repoOwner, repoName, (parsedResponse) => {
     const path = 'avatars';
     if(!fs.existsSync(path)) {
       console.log(`Missing folder: ./${path}`);
       return;
     }
 
-    const contributors = JSON.parse(body);
-    for (const contributor of contributors) {
+    for (const contributor of parsedResponse) {
       git.downloadContributorAvatar(contributor, path);
     }
     console.log('Avatars downloaded!');
